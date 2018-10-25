@@ -24,7 +24,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     public void getIPAddres() {
-//        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+///        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 //        model.addRow(new Object[]{"Column 1", "Column 2", "Column 3"});
 
         final byte[] ip;
