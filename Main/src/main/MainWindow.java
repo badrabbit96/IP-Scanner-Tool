@@ -1,14 +1,20 @@
 package main;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import java.net.*;
+import java.io.*;
 
 /**
  *
@@ -26,7 +32,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         getIPAddres();
         loadData();
-        
+       
 
     }
 
@@ -34,26 +40,36 @@ public class MainWindow extends javax.swing.JFrame {
 
         try {
             yourIP.setText(InetAddress.getLocalHost().getHostAddress());
+
         } catch (UnknownHostException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public void test() throws IOException{
-   
+    public void test() throws IOException {
+
     }
+
     public void getIPAddres() {
 
         final byte[] ip;
         try {
             ip = InetAddress.getLocalHost().getAddress();
 
+            URL whatismyip = new URL("http://checkip.amazonaws.com");
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    whatismyip.openStream()));
+
+            String ipa = in.readLine(); //you get the IP as a String
+
+            zewIP.setText(ipa);
         } catch (Exception e) {
             return;     // exit method, otherwise "ip might not have been initialized"
         }
 
         for (int i = 1; i <= 254; i++) {
+           
             final int j = i;  // i as non-final variable cannot be referenced from inner class
             new Thread(new Runnable() {   // new thread for parallel execution
                 public void run() {
@@ -63,26 +79,29 @@ public class MainWindow extends javax.swing.JFrame {
                         InetAddress address = InetAddress.getByAddress(ip);
                         String output = address.toString().substring(1);
                         long start_time = System.nanoTime();
-                        if (address.isReachable(5000)) {
+                        if (address.isReachable(10)) {
+                            
+                          
+                            
                             String hostname = address.getHostName();
                             String ip = address.getHostAddress();
+
+                            
                             byte[] tmac = address.getAddress();
 
                             //System.out.println("Adres IP: " + output);
-
                             long end_time = System.nanoTime();
                             double difference = (end_time - start_time) / 1e6;
                             String ping = Double.toString(difference);
 
                             //System.out.println("Ping: " + ping.substring(0, 1) + "ms");
-
                             if (hostname.equals(output)) {
                                 //System.out.println("Brak nazwy hosta");
                                 hostname = "n/a";
                             } else {
-                      
+
                             }
-                            
+
                             String macAdress = "n/a";
                             if (output.equals(InetAddress.getLocalHost().getHostAddress())) {
                                 InetAddress ip1 = InetAddress.getByName(output);
@@ -102,7 +121,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                             model.addRow(new Object[]{output, hostname, ping.substring(0, 1), macAdress});
-                                   
+
                         } else {
                             //  System.out.println("Not Reachable: "+output);
                         }
@@ -112,7 +131,7 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }).start();     // dont forget to start the thread
         }
-
+       
     }
 
     /**
@@ -124,13 +143,20 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         yourIP = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        zewIP = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+
+        jLabel2.setText("Twój wewnętrzny adres IP:");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -140,6 +166,7 @@ public class MainWindow extends javax.swing.JFrame {
                 "Adres IP", "Nazwa hosta", "Ping", "Adres MAC"
             }
         ));
+        jTable1.setEnabled(false);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(20);
@@ -152,10 +179,18 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Twój adres IP:");
+        jLabel1.setText("Zewnętrzny adres IP:");
 
         yourIP.setForeground(new java.awt.Color(0, 0, 255));
         yourIP.setText("adresIP");
+
+        jLabel3.setText("Wewnętrzny adres IP:");
+
+        zewIP.setForeground(new java.awt.Color(0, 153, 51));
+        zewIP.setText("adresip");
+
+        jLabel4.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
+        jLabel4.setText("IP Scanner Tool");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -166,24 +201,38 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(yourIP, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(yourIP, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(zewIP, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(295, 295, 295)
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(yourIP))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(yourIP)
+                        .addComponent(jLabel3)
+                        .addComponent(zewIP))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -239,8 +288,12 @@ public class MainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel yourIP;
+    private javax.swing.JLabel zewIP;
     // End of variables declaration//GEN-END:variables
 }
