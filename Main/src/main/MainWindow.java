@@ -1,5 +1,8 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
@@ -23,6 +26,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         getIPAddres();
         loadData();
+        
 
     }
 
@@ -36,9 +40,10 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
+    public void test() throws IOException{
+   
+    }
     public void getIPAddres() {
-//        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-//        model.addRow(new Object[]{"Column 1", "Column 2", "Column 3"});
 
         final byte[] ip;
         try {
@@ -63,62 +68,41 @@ public class MainWindow extends javax.swing.JFrame {
                             String ip = address.getHostAddress();
                             byte[] tmac = address.getAddress();
 
-                            System.out.println("Adres IP: " + output);
+                            //System.out.println("Adres IP: " + output);
 
                             long end_time = System.nanoTime();
                             double difference = (end_time - start_time) / 1e6;
                             String ping = Double.toString(difference);
 
-                            System.out.println("Ping: " + ping.substring(0, 1) + "ms");
+                            //System.out.println("Ping: " + ping.substring(0, 1) + "ms");
 
                             if (hostname.equals(output)) {
                                 //System.out.println("Brak nazwy hosta");
                                 hostname = "n/a";
                             } else {
-                                //System.out.println("Nazwa hosta:" + hostname);
-
+                      
                             }
-
-//                            System.out.println(tmac);
-//
-//                            StringBuilder sb = new StringBuilder();
-//                            for (int i = 0; i < tmac.length; i++) {
-//                                sb.append(String.format("%02X%s", tmac[i], (i < tmac.length - 1) ? "-" : ""));
-//                            }
-//                            System.out.println(sb.toString());
+                            
                             String macAdress = "n/a";
                             if (output.equals(InetAddress.getLocalHost().getHostAddress())) {
-                               InetAddress ip1 = InetAddress.getByName(output);
+                                InetAddress ip1 = InetAddress.getByName(output);
 
-                            NetworkInterface network = NetworkInterface.getByInetAddress(ip1);
+                                NetworkInterface network = NetworkInterface.getByInetAddress(ip1);
 
-                            byte[] mac = network.getHardwareAddress();
+                                byte[] mac = network.getHardwareAddress();
 
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 0; i < mac.length; i++) {
-                                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-                            }
-                            System.out.println(sb.toString());
-                            macAdress = sb.toString();
-                                
+                                StringBuilder sb = new StringBuilder();
+                                for (int i = 0; i < mac.length; i++) {
+                                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                                }
+                                //System.out.println(sb.toString());
+                                macAdress = sb.toString();
+
                             }
 
                             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-                            model.addRow(new Object[]{output, hostname, ping.substring(0, 1),macAdress});
-
-//                            InetAddress ip1 = InetAddress.getByName(output);
-//
-//                            NetworkInterface network = NetworkInterface.getByInetAddress(ip1);
-//
-//                            byte[] mac = network.getHardwareAddress();
-//
-//                            //        System.out.print("Current MAC address : ");
-//                            StringBuilder sb = new StringBuilder();
-//                            for (int i = 0; i < mac.length; i++) {
-//                                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-//                            }
-//                          //  System.out.println(sb.toString());
-//                           
+                            model.addRow(new Object[]{output, hostname, ping.substring(0, 1), macAdress});
+                                   
                         } else {
                             //  System.out.println("Not Reachable: "+output);
                         }
@@ -207,7 +191,14 @@ public class MainWindow extends javax.swing.JFrame {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int rows = model.getRowCount();
+        for (int i = rows - 1; i >= 0; i--) {
+            model.removeRow(i);
+        }
+
+        getIPAddres();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
